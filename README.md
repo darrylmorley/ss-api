@@ -1,3 +1,3 @@
-# My Express Starter
+# SS-Backend
 
-My basic express starter with Morgan, Nodemon & Typescript
+Backend for Shooting Supplies Website and applications.

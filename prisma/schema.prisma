@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id           String                 @id @default(uuid())
+  lightspeedId Int?
+  name         String
+  description  String?
+  imageId      String
+  image        Image                  @relation(fields: [imageId], references: [id])
+  products     ProductsInCategories[]
+  Product      Product?               @relation(fields: [productId], references: [id])
+  productId    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id           String    @id @default(uuid())
+  lightspeedId Int?
+  name         String
+  description  String?
+  imageId      String
+  image        Image     @relation(fields: [imageId], references: [id])
+  products     Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id               String                 @id @default(uuid())
+  lightspeedId     Int
+  sku              String
+  ean              String
+  name             String
+  shortDescription String
+  longDescription  String
+  qty              Int                    @default(0)
+  price            Int
+  salePrice        Int?
+  onPreOrder       Boolean                @default(false)
+  preOrderQty      Int                    @default(0)
+  onSale           Boolean                @default(false)
+  onBackOrder      Boolean                @default(false)
+  matrixItem       Boolean                @default(false)
+  weight           Float?
+  width            Float?
+  height           Float?
+  length           Float?
+  imageId          String
+  image            Image                  @relation(fields: [imageId], references: [id])
+  tag              String[]
+  brandId          String
+  brand            Brand                  @relation(fields: [brandId], references: [id])
+  categories       ProductsInCategories[]
+  Category         Category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductsInCategories {
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([productId, categoryId])
+}
+
+model Image {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  url         String
+
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  products   Product[]
+  brands     Brand[]
+  categories Category[]
+}
